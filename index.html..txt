@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board"></div>
+    <p id="winner"></p>
+    <button onclick="restartGame()">Restart</button>
+    <script src="script.js"></script>
+</body>
+</html>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 5px;
+    justify-content: center;
+}
+.cell {
+    width: 100px;
+    height: 100px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: lightgray;
+    cursor: pointer;
+}
+.cell.taken {
+    cursor: not-allowed;
+}const board = document.getElementById("board");
+let cells = Array(9).fill(null);
+let currentPlayer = "X";
+
+function createBoard() {
+    board.innerHTML = "";
+    cells.forEach((cell, index) => {
+        const div = document.createElement("div");
+        div.classList.add("cell");
+        div.textContent = cell;
+        div.addEventListener("click", () => makeMove(index));
+        board.appendChild(div);
+    });
+}
+
+function makeMove(index) {
+    if (!cells[index]) {
+        cells[index] = currentPlayer;
+        currentPlayer = currentPlayer === "X" ? "O" : "X";
+        checkWinner();
+        createBoard();
+    }
+}
+
+function checkWinner() {
+    const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+    for (const combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+            document.getElementById("winner").textContent = `Winner: ${cells[a]}`;
+            return;
+        }
+    }
+}
+
+function restartGame() {
+    cells = Array(9).fill(null);
+    currentPlayer = "X";
+    document.getElementById("winner").textContent = "";
+    createBoard();
+}
+
+createBoard();
